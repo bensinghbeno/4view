@@ -21,10 +21,12 @@ String accelZ;
 // Auxiliar variables to store the current output state
 String output5State = "off";
 String output4State = "off";
+String output1State = "off";
 
 // Assign output variables to GPIO pins
 const int output5 = 5;
 const int output4 = 4;
+const int output1 = 1;
 
 String getValue(String data, char separator, int index)
 {
@@ -69,9 +71,11 @@ void setup() {
   // Initialize the output variables as outputs
   pinMode(output5, OUTPUT);
   pinMode(output4, OUTPUT);
+  pinMode(output1, OUTPUT);
   // Set outputs to LOW
   digitalWrite(output5, LOW);
   digitalWrite(output4, LOW);
+  digitalWrite(output1, LOW);
 
   // Connect to Wi-Fi network with SSID and password
   setupWiFi();
@@ -177,6 +181,14 @@ void loop(){
               Serial.println("GPIO 4 off");
               output4State = "off";
               digitalWrite(output4, LOW);
+            } else if (header.indexOf("GET /1/on") >= 0) {
+              Serial.println("GPIO 1 on");
+              output1State = "on";
+              digitalWrite(output1, HIGH);
+            } else if (header.indexOf("GET /1/off") >= 0) {
+              Serial.println("GPIO 1 off");
+              output1State = "off";
+              digitalWrite(output1, LOW);
             }
 
             // Display the HTML web page
@@ -186,9 +198,9 @@ void loop(){
             // CSS to style the on/off buttons
             // Feel free to change the background-color and font-size attributes to fit your preferences
             client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+            client.println(".button { background-color: #77878A; border: none; color: white; padding: 16px 40px;");
             client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #77878A;}</style></head>");
+            client.println(".button2 {background-color: #195B6A;}</style></head>");
 
             // Web Page Heading
             client.println("<body><h1>ForeView ESP8266 Web Server</h1>");
@@ -203,18 +215,27 @@ void loop(){
             client.println("<p>GPIO 5 - State " + output5State + "</p>");
             // If the output5State is off, it displays the ON button
             if (output5State=="off") {
-              client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
+              client.println("<p><a href=\"/5/on\"><button class=\"button\">OFF</button></a></p>");
             } else {
-              client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
+              client.println("<p><a href=\"/5/off\"><button class=\"button button2\">ON</button></a></p>");
             }
 
             // Display current state, and ON/OFF buttons for GPIO 4
             client.println("<p>GPIO 4 - State " + output4State + "</p>");
             // If the output4State is off, it displays the ON button
             if (output4State=="off") {
-              client.println("<p><a href=\"/4/on\"><button class=\"button\">ON</button></a></p>");
+              client.println("<p><a href=\"/4/on\"><button class=\"button\">OFF</button></a></p>");
             } else {
-              client.println("<p><a href=\"/4/off\"><button class=\"button button2\">OFF</button></a></p>");
+              client.println("<p><a href=\"/4/off\"><button class=\"button button2\">ON</button></a></p>");
+            }
+
+            // Display current state, and ON/OFF buttons for GPIO 1
+            client.println("<p>GPIO 1 - State " + output4State + "</p>");
+            // If the output1State is off, it displays the ON button
+            if (output1State=="off") {
+              client.println("<p><a href=\"/1/on\"><button class=\"button\">OFF</button></a></p>");
+            } else {
+              client.println("<p><a href=\"/1/off\"><button class=\"button button2\">ON</button></a></p>");
             }
             client.println("</body></html>");
 
@@ -238,7 +259,4 @@ void loop(){
     Serial.println("");
   }
 }
-
-
-
 
